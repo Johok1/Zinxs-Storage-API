@@ -13,9 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.springframework.web.multipart.MultipartFile;
-import zinxs.wiki.accountsapi.Account;
-import zinxs.wiki.accountsapi.AccountRepository;
-import zinxs.wiki.accountsapi.utilities.AuthTokenUtils;
+
 import zinxs.wiki.pagesapi.Page;
 import zinxs.wiki.pagesapi.PageRepository;
 
@@ -32,11 +30,6 @@ public class ImageService implements ImageServiceInterface{
     @Autowired
     private ImageRepository imageRepository;
 
-    @Autowired
-    private AuthTokenUtils authTokenUtils;
-
-    @Autowired
-    private AccountRepository accountRepository;
 
     @Autowired
     private PageRepository pageRepository;
@@ -103,9 +96,9 @@ public class ImageService implements ImageServiceInterface{
     }
 
     @Override
-    public String addPageImage(String memberId, String pageId, String filename, MultipartFile file){
+    public String addPageImage(String pageId, String filename, MultipartFile file){
         try{
-            if(isPageCreator(memberId, pageId)){
+
                 Page page = pageRepository.findById(Long.valueOf(pageId)).get();
                 Image image = new Image();
 
@@ -150,9 +143,7 @@ public class ImageService implements ImageServiceInterface{
                 pageRepository.save(page);
                 imageRepository.save(image);
                 return "true";
-            }else{
-                throw new Exception("Invalid credentials");
-            }
+
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -197,12 +188,12 @@ public class ImageService implements ImageServiceInterface{
     }
 
     @Override
-    public String setPageImg(String token, String pageId, String fileName, MultipartFile multipartFile) {
+    public String setPageImg(String pageId, String fileName, MultipartFile multipartFile) {
         try {
 
 
-            if(isPageCreator(token, pageId)){
-                Account account = getAccount(token);
+
+
                 Page page = pageRepository.findById(Long.valueOf(pageId)).get();
 
 
@@ -228,13 +219,9 @@ public class ImageService implements ImageServiceInterface{
 
                 page.setImgFilepath(filePath.toString());
                 pageRepository.save(page);
-                ArrayList<Page> newPageList = replacePageInList(account.getPages(), pageId, page);
-                account.setPages(newPageList);
-                accountRepository.save(account);
+
                 return "CREATED";
-            }else{
-                throw new RuntimeException("invalid credentials");
-            }
+
         }catch (Exception e){
             System.out.println(e.getMessage());
             return "FAILED " + e.getMessage() ;
@@ -244,33 +231,7 @@ public class ImageService implements ImageServiceInterface{
 
 
 
-    private boolean isPageCreator(String token, String pageId){
-        try{
-            Account account = getAccount(token);
-            Page page = pageRepository.findById(Long.valueOf(pageId)).get();
-            if(page.getCreator().getId().equals(account.getId())) {
-                return true;
-            }else{
-                return false;
-            }
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
 
-    private Account getAccount(String token){
-        try{
-            String decodedToken = authTokenUtils.decodeEmail(token);
-            Account targetAccount = (Account) accountRepository.findByEmail(decodedToken).get();
-            if(targetAccount.isEnabled()){
-                return targetAccount;
-            }else{
-                throw new RuntimeException("Account " + decodedToken + " is disabled!");
-            }
-        }catch (Exception e){
-            throw new RuntimeException("getAccount error " + e);
-        }
-    }
     private ArrayList<Page> replacePageInList(ArrayList<Page> pages, String replaceId, Page replaceWith){
         for(int x = 0; x<pages.size(); x++){
             if(pages.get(x).getId().equals(Long.valueOf(replaceId))){

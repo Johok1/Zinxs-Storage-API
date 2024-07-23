@@ -4,11 +4,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import zinxs.wiki.jsonobjects.ImageItemUrlRequest;
-import zinxs.wiki.jsonobjects.ImageObjResponse;
-import zinxs.wiki.jsonobjects.ImageUrlRequest;
 
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "image")
@@ -29,10 +25,10 @@ public class ImageController {
     }
 
     @CrossOrigin
-    @PostMapping("postPageImage/{memberId}/{pageId}/{filename}")
-    public String postPageImage( @PathVariable String memberId, @PathVariable String pageId,@PathVariable String filename,
+    @PostMapping("postPageImage/{pageId}/{filename}")
+    public String postPageImage( @PathVariable String pageId,@PathVariable String filename,
                                 @RequestParam("file")MultipartFile file){
-        return imageService.setPageImg(memberId, pageId,filename, file);
+        return imageService.setPageImg(pageId,filename, file);
     }
     @CrossOrigin
     @GetMapping("getPageImageUrl/{pageId}/{imageId}")
@@ -53,10 +49,10 @@ public class ImageController {
     }
 
     @CrossOrigin
-    @PostMapping("addPageImageUrl/{memberId}/{pageId}/{filename}")
-    public String addPageImageUrl(@PathVariable String memberId, @PathVariable String pageId,
+    @PostMapping("addPageImageUrl/{pageId}/{filename}")
+    public String addPageImageUrl( @PathVariable String pageId,
                                   @PathVariable String filename, @RequestBody MultipartFile file){
-        return imageService.addPageImage(memberId, pageId,filename, file);
+        return imageService.addPageImage( pageId,filename, file);
     }
 
 }

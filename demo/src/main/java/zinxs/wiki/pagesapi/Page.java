@@ -2,7 +2,7 @@ package zinxs.wiki.pagesapi;
 
 import lombok.Getter;
 import lombok.Setter;
-import zinxs.wiki.accountsapi.Account;
+
 
 import zinxs.wiki.imagesapi.Image;
 
@@ -31,14 +31,14 @@ public class Page implements Serializable {
     )
     private Long id;
 
-    private Account creator;
-
     private String imgFilepath;
 
     private String filepath;
 
     private String pageName;
 
+    //Unidirectional relation
+    @OneToMany(mappedBy = "pages", cascade = CascadeType.ALL, orphanRemoval = true)
     private ArrayList<Image> imageObjs;
 
     public Page(){

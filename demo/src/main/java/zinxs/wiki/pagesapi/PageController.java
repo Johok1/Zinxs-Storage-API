@@ -19,38 +19,29 @@ public class PageController {
     }
 
     @CrossOrigin
-    @GetMapping("getAccountPageContent/{wixId}/{pageId}")
+    @GetMapping("getAccountPageContent/{pageId}")
     public String getAccountPageContent(@PathVariable String wixId, @PathVariable String pageId){
-        return pageService.getPageContent(wixId, pageId);
+        return pageService.getPageContent(pageId);
     }
     @CrossOrigin
-    @PostMapping("postPageName/{memberId}/{pageId}/{pageName}")
-    public String postPageName(@PathVariable String memberId, @PathVariable String pageId,
+    @PostMapping("postPageName/{pageId}/{pageName}")
+    public String postPageName(@PathVariable String pageId,
                                @PathVariable String pageName){
-        return pageService.setPageName(memberId, pageId, pageName);
+        return pageService.setPageName(pageId, pageName);
     }
 
     @CrossOrigin
-    @PostMapping("postNewAccountPage/{wixId}/{pageName}")
-    public String postNewAccountPage(@PathVariable String wixId, @PathVariable String pageName){
-        return pageService.newAccountPage(wixId, pageName);
+    @PostMapping("postNewPage/{pageName}")
+    public String postNewPage(@PathVariable String pageName){
+        return pageService.newPage(pageName);
     }
 
     @CrossOrigin
-    @PostMapping("postAccountPageContent/{wixId}/{pageId}")
-    public String postAccountPageContent(@PathVariable String wixId, @PathVariable String pageId, @RequestBody String content){
-        return pageService.postAccountPageContent(wixId, pageId, content);
+    @PostMapping("postAccountPageContent/{pageId}")
+    public String postAccountPageContent( @PathVariable String pageId, @RequestBody String content){
+        return pageService.postAccountPageContent(pageId, content);
     }
 
-    @CrossOrigin
-    @GetMapping("registerPage/{pin}/{pageId}")
-    public String registerPage(@PathVariable String pin, @PathVariable String pageId){
-        return pageService.registerPage(pin, pageId);
-    }
 
-    @CrossOrigin
-    @GetMapping("setPageToAccount/{pin}/{pageId}/{email}")
-    public String setPageToAccount(@PathVariable String pin, @PathVariable String pageId, @PathVariable String email){
-        return pageService.setPageToAccount(pin, pageId, email);
-    }
+
 }
