@@ -5,6 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 import org.springframework.web.multipart.MultipartFile;
 import zinxs.wiki.accountsapi.Account;
 import zinxs.wiki.accountsapi.AccountRepository;
@@ -13,16 +20,11 @@ import zinxs.wiki.pagesapi.Page;
 import zinxs.wiki.pagesapi.PageRepository;
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 @Service
 @AllArgsConstructor
-public class ImageService implements  ImageServiceInterface{
+public class ImageService implements ImageServiceInterface{
 
     //Isn't it interesting how the imageservice class has a
     // dependency on every single repository but the image repository
@@ -108,7 +110,9 @@ public class ImageService implements  ImageServiceInterface{
                 Image image = new Image();
 
 
-                String basePath = "/classes/static/pages/" + page.getPageName() + "/images/";
+                imageRepository.save(image);
+                String pageName = page.getPageName().replaceAll(" ", "_");
+                String basePath = "/classes/static/pages/" +pageName  + "/images/";
 
                 Path directoryPath = Paths.get(basePath);
                 Files.createDirectories(directoryPath);
@@ -128,7 +132,6 @@ public class ImageService implements  ImageServiceInterface{
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
-
 
 
 

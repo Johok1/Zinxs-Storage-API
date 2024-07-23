@@ -4,6 +4,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import zinxs.wiki.jsonobjects.ImageItemUrlRequest;
+import zinxs.wiki.jsonobjects.ImageObjResponse;
+import zinxs.wiki.jsonobjects.ImageUrlRequest;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "image")

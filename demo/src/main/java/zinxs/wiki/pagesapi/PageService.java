@@ -9,10 +9,8 @@ import zinxs.wiki.accountsapi.utilities.AuthTokenUtils;
 import zinxs.wiki.imagesapi.Image;
 import zinxs.wiki.imagesapi.ImageRepository;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,8 +61,9 @@ public class PageService implements PageServiceInterface{
         try{
             if(pin.equals("BUST")) {
                 Page page = new Page();
-                pageName = pageName.replaceAll(" ", "_");
                 page.setPageName(pageName);
+                pageName = pageName.replaceAll(" ", "_");
+
                // page.setId(Long.valueOf(pageId));
                 ArrayList<Image> pageImages = page.getImageObjs();
                 //Creating a File object for directory
@@ -96,7 +95,7 @@ public class PageService implements PageServiceInterface{
                     if (file.isDirectory()) {
 
                     } else {
-                        page.setFilePath(file.getPath());
+                        page.setFilepath(file.getPath());
                     }
                 }
 
@@ -126,9 +125,9 @@ public class PageService implements PageServiceInterface{
             Page page = new Page();
             Account account = getAccount(token);
             page.setCreator(account);
-            pageName = pageName.replaceAll(" ", "_");
-            page.setPageName(pageName);
 
+            page.setPageName(pageName);
+            pageName = pageName.replaceAll(" ", "_");
             pageRepository.save(page);
             ArrayList<Page> pages = account.getPages();
             String basePath = "/classes/static/pages/"+pageName+"/";
@@ -136,7 +135,7 @@ public class PageService implements PageServiceInterface{
             byte[] byteArray = {};
             InputStream input = new ByteArrayInputStream(byteArray);
             String filepath = makeFileAtPathFromInput(basePath, fileName, input);
-            page.setFilePath(filepath);
+            page.setFilepath(filepath);
             pages.add(page);
             account.setPages(pages);
             accountRepository.save(account);
@@ -189,8 +188,9 @@ public class PageService implements PageServiceInterface{
             if(isPageCreator(memberId, pageId)){
                 Account account = getAccount(memberId);
                 Page page = pageRepository.findById(Long.valueOf(pageId)).get();
-                pageName = pageName.replaceAll(" ", "_");
+
                 page.setPageName(pageName);
+              //  pageName = pageName.replaceAll(" ", "_");
                 pageRepository.save(page);
                 ArrayList<Page> newPageList = replacePageInList(account.getPages(), pageId, page);
                 account.setPages(newPageList);
@@ -213,7 +213,7 @@ public class PageService implements PageServiceInterface{
                // page.setPageContent(content);
                 pageRepository.save(page);
 
-                File pageFile = new File(page.getFilePath());
+                File pageFile = new File(page.getFilepath());
 
                 FileWriter writer = new FileWriter(pageFile);
                 writer.write(content);
@@ -236,7 +236,7 @@ public class PageService implements PageServiceInterface{
             Account account = getAccount(wixId);
             Page page = pageRepository.findById(Long.valueOf(pageId)).get();
             if(page.getCreator().getId().equals(account.getId())) {
-                return new String(Files.readAllBytes(Paths.get(page.getFilePath())));
+                return new String(Files.readAllBytes(Paths.get(page.getFilepath())));
             }else {
                 throw new RuntimeException("Invalid Credentials");
             }

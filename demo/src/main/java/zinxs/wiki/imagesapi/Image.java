@@ -10,16 +10,21 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Setter
+@Table(name = "images", indexes = {
+        @Index(name = "idx_filename", columnList = "filename"),
+        @Index(name = "idx_filepath", columnList = "filepath")
+})
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 public class Image implements Serializable {
     @SequenceGenerator(
-            name = "page_sequence",
-            sequenceName = "page_sequence",
+            name = "image_sequence",
+            sequenceName = "image_sequence",
             allocationSize = 1
     )
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "page_sequence"
+            generator = "image_sequence"
     )
     private Long id;
 

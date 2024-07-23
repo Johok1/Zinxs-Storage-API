@@ -3,6 +3,7 @@ package zinxs.wiki.pagesapi;
 import lombok.Getter;
 import lombok.Setter;
 import zinxs.wiki.accountsapi.Account;
+
 import zinxs.wiki.imagesapi.Image;
 
 import javax.persistence.*;
@@ -12,6 +13,11 @@ import java.util.ArrayList;
 @Entity
 @Getter
 @Setter
+@Table(name = "pages", indexes = {
+        @Index(name = "idx_filepath", columnList = "filepath"),
+        @Index(name = "idx_pageName", columnList = "pageName"),
+        @Index(name = "idx_imgFilepath", columnList = "imgFilepath")
+})
 public class Page implements Serializable {
     @SequenceGenerator(
             name = "page_sequence",
@@ -29,29 +35,13 @@ public class Page implements Serializable {
 
     private String imgFilepath;
 
-    private String email;
+    private String filepath;
 
-    private String filePath;
-    private ArrayList<String> bannedAccounts;
-    private ArrayList<String> editAccessAccounts;
-    private ArrayList<String> internalTags;
-
-    private ArrayList<String> imageContext;
-
-    private ArrayList<String> videoContext;
+    private String pageName;
 
     private ArrayList<Image> imageObjs;
 
-    private boolean status;
-    private String pageName;
-
     public Page(){
-        this.bannedAccounts = new ArrayList<>();
-        this.editAccessAccounts = new ArrayList<>();
-        this.internalTags = new ArrayList<>();
-        this.status = true;
-        this.imageContext = new ArrayList<>();
-        this.videoContext = new ArrayList<>();
         this.imageObjs = new ArrayList<>();
     }
 }
