@@ -4,16 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import zinxs.wiki.imagesapi.Image;
-import zinxs.wiki.imagesapi.ImageRepository;
+
+
+import zinxs.wiki.utils.FilenameValidator;
 
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
+import java.nio.file.*;
+import java.util.logging.Logger;
 
 @Service
 @AllArgsConstructor
@@ -22,52 +20,42 @@ public class PageService implements PageServiceInterface{
     @Autowired
     private PageRepository pageRepository;
 
+    private static final Logger logger = Logger.getLogger(PageService.class.getName());
 
-
-    @Autowired
-    private ImageRepository imageRepository;
-
-
-
-
-
-
-    /*
-          Before, we made a page and automatically associated it with an account, now we will make a page,
-          and send the id to the frontend, and it can pass it into the account api to validate it. In the future, for security,
-          we can have this endpoint take something like an account token, and use it to create another token that stores the
-          page and account together, so then when its set to the page and it can tell that it came from that user and not someone else,
-          using this system to mess with peoples page ownership.
-
-     */
     @Override
     public String newPage(String pageName){
-        try{
+
             Page page = new Page();
-
-
-
             page.setPageName(pageName);
-            pageName = pageName.replaceAll(" ", "_");
-
-
-            String basePath = "/classes/static/pages/"+pageName+"/";
-            String fileName = pageName+".txt";
-            byte[] byteArray = {};
-            InputStream input = new ByteArrayInputStream(byteArray);
-            String filepath = makeFileAtPathFromInput(basePath, fileName, input);
-            page.setFilepath(filepath);
-
-
             pageRepository.save(page);
+            try {
+                if (!FilenameValidator.validateStringFilenameUsingRegex(pageName)) {
+                    pageName = FilenameValidator.sanitizeFilename(pageName);
+                }
+                return createPage(pageName, page);
+            }catch (FileAlreadyExistsException e){
+                logger.severe("Duplicate file detected. Since filenames have their id's attached to them," +
+                        " a duplicate file should never be an issue. " + e.getMessage());
+                return e.getMessage();
+            }
 
-            return String.valueOf(page.getId());
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
     }
 
-    private String makeFileAtPathFromInput(String basePath, String fileName, InputStream input){
+    private String createPage(String pageName, Page page) throws FileAlreadyExistsException {
+        String basePath = "/classes/static/pages/";
+        String fileName = pageName + page.getId() + ".txt";
+        byte[] byteArray = {};
+        InputStream input = new ByteArrayInputStream(byteArray);
+        String filepath = makeFileAtPathFromInput(basePath, fileName, input);
+        page.setFilepath(filepath);
+
+
+        pageRepository.save(page);
+
+        return String.valueOf(page.getId());
+    }
+
+    private String makeFileAtPathFromInput(String basePath, String fileName, InputStream input) throws FileAlreadyExistsException {
 
         try {
 
@@ -79,7 +67,7 @@ public class PageService implements PageServiceInterface{
             File dir = new File(basePath, fileName);
 
             if (dir.exists()) {
-                return "EXIST";
+                throw new FileAlreadyExistsException(dir.getPath() + " already exists!");
             }
 
 
@@ -98,16 +86,12 @@ public class PageService implements PageServiceInterface{
             Page page = pageRepository.findById(Long.valueOf(pageId)).get();
             return page.getPageName();
         }catch (Exception e){
-            throw new RuntimeException(e);
+            logger.severe("A user tried to access a page with an invalid id " + e.getMessage());
+            return "Invalid page";
         }
     }
 
-    /*
-           Before we used a method "isPageCreator", in the future we can use some method of encoding the account
-           information into a token that we pass, that we then decode to get a string that identifies the account in some way,
-           that we then check against something stored inside our page object that indicates the identifier of its owner.
 
-     */
     @Override
     public String setPageName(String pageId, String pageName){
         try{
@@ -123,7 +107,8 @@ public class PageService implements PageServiceInterface{
                 return "true";
 
         }catch (Exception e){
-            throw new RuntimeException(e);
+            logger.severe("A user tried to access a page with an invalid id " + e.getMessage());
+            return "Invalid page";
         }
     }
 
@@ -145,7 +130,8 @@ public class PageService implements PageServiceInterface{
                 return "true";
 
         }catch (Exception e){
-            throw new RuntimeException(e);
+            logger.severe("A user tried to access a page with an invalid id " + e.getMessage());
+            return "Invalid page";
         }
     }
 
@@ -158,20 +144,9 @@ public class PageService implements PageServiceInterface{
             return new String(Files.readAllBytes(Paths.get(page.getFilepath())));
 
         }catch (Exception e){
-            throw new RuntimeException(e);
+            logger.severe("A user tried to access a page with an invalid id " + e.getMessage());
+            return "Invalid page";
         }
     }
 
-
-
-
-
-    private ArrayList<Page> replacePageInList(ArrayList<Page> pages, String replaceId, Page replaceWith){
-        for(int x = 0; x<pages.size(); x++){
-            if(pages.get(x).getId().equals(Long.valueOf(replaceId))){
-                pages.set(x,replaceWith);
-            }
-        }
-        return pages;
-    }
 }

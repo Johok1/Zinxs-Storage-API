@@ -16,9 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import zinxs.wiki.pagesapi.Page;
 import zinxs.wiki.pagesapi.PageRepository;
+import zinxs.wiki.pagesapi.PageService;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 @Service
 @AllArgsConstructor
@@ -27,10 +29,10 @@ public class ImageService implements ImageServiceInterface{
     //Isn't it interesting how the imageservice class has a
     // dependency on every single repository but the image repository
 
+    private static final Logger logger = Logger.getLogger(PageService.class.getName());
+
     @Autowired
     private ImageRepository imageRepository;
-
-
     @Autowired
     private PageRepository pageRepository;
 
