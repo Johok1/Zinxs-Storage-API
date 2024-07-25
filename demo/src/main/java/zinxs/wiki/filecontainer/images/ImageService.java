@@ -30,8 +30,7 @@ import java.util.logging.Logger;
 @AllArgsConstructor
 public class ImageService implements ImageServiceInterface {
 
-    //Isn't it interesting how the imageservice class has a
-    // dependency on every single repository but the image repository
+
 
     private static final Logger logger = Logger.getLogger(ImageService.class.getName());
 
