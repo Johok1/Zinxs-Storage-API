@@ -1,4 +1,4 @@
-package zinxs.wiki.pagesapi;
+package zinxs.wiki.filecontainer.pages;
 
 public interface PageServiceInterface {
 

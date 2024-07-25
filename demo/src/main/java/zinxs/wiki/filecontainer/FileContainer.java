@@ -1,4 +1,4 @@
-package zinxs.wiki.imagesapi;
+package zinxs.wiki.filecontainer;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,23 +10,27 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Setter
-@Table(name = "images", indexes = {
+@Table(name = "files", indexes = {
         @Index(name = "idx_filename", columnList = "filename"),
+        @Index(name = "idx_basepath", columnList = "basepath"),
         @Index(name = "idx_filepath", columnList = "filepath")
 })
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-public class Image implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name = "file_type")
+public class FileContainer implements Serializable {
     @SequenceGenerator(
-            name = "image_sequence",
-            sequenceName = "image_sequence",
+            name = "files_sequence",
+            sequenceName = "files_sequence",
             allocationSize = 1
     )
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "image_sequence"
+            generator = "files_sequence"
     )
     private Long id;
+
+    private String basePath;
 
     private String filename;
 

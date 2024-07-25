@@ -1,4 +1,4 @@
-package zinxs.wiki.imagesapi;
+package zinxs.wiki.filecontainer.images;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -31,9 +31,9 @@ public class ImageController {
         return imageService.setPageImg(pageId,filename, file);
     }
     @CrossOrigin
-    @GetMapping("getPageImageUrl/{pageId}/{imageId}")
-    public Resource getPageImageUrl(@PathVariable String pageId, @PathVariable String imageId){
-        return imageService.getPageImageUrl(pageId, imageId);
+    @GetMapping("getPageImageUrl/{imageId}")
+    public Resource getPageImageUrl( @PathVariable String imageId){
+        return imageService.getPageImageUrl(imageId);
     }
 
     @CrossOrigin
@@ -43,9 +43,9 @@ public class ImageController {
     }
 
     @CrossOrigin
-    @GetMapping("getImageName/{pageId}/{imageId}")
-    public String getImageName(@PathVariable String pageId, @PathVariable String imageId){
-        return imageService.getImageName(pageId, imageId);
+    @GetMapping("getImageName/{imageId}")
+    public String getImageName( @PathVariable String imageId){
+        return imageService.getImageName(imageId);
     }
 
     @CrossOrigin

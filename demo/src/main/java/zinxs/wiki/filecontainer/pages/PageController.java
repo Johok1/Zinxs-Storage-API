@@ -1,6 +1,7 @@
-package zinxs.wiki.pagesapi;
+package zinxs.wiki.filecontainer.pages;
 
 import org.springframework.web.bind.annotation.*;
+import zinxs.wiki.filecontainer.pages.PageServiceInterface;
 
 @RestController
 @RequestMapping(path = "page")

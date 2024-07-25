@@ -1,4 +1,4 @@
-package zinxs.wiki.utils;
+package zinxs.wiki.filecontainer.utils;
 
 public class FilenameValidator {
 

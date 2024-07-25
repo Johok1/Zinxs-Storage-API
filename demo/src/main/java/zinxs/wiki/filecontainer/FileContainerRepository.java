@@ -1,4 +1,4 @@
-package zinxs.wiki.imagesapi;
+package zinxs.wiki.filecontainer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,9 +8,8 @@ import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public interface ImageRepository extends JpaRepository<Image, Long> {
+public interface FileContainerRepository extends JpaRepository<FileContainer, Long> {
 
-    Optional<Image> findById(Long id);
+    Optional<FileContainer> findById(Long id);
 
 }
-
